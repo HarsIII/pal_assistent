@@ -163,7 +163,7 @@ not official documentation or our own independent confirmation:
 | `WorkSuitabilityOptionInfo` | StructProperty | Work-suitability preferences |
 | `NickName`, `FilteredNickName` | StrProperty | Player-given nickname (raw and profanity-filtered) |
 | `SkinName`, `SkinAppliedCharacterId` | NameProperty / Guid | Cosmetic skin |
-| `HP.Value`, `ShieldHP.Value` | StructProperty(FixedPoint64) | Current HP / shield |
+| `HP.Value`, `ShieldHP.Value` | StructProperty(FixedPoint64) | Current HP / shield. **VERIFIED** (user cross-checked against in-game UI): `Hp.Value = displayed_HP * 1000` (e.g. 5244000 <-> displayed 5244). Same x1000 scaling for `ShieldHP.Value` is a reasonable but **unverified** extension (same struct type, not independently confirmed). |
 | `UniqueNPCID` | NameProperty | Set on named/boss NPCs (observed value: a boss identifier matching names also seen in `LocalData.sav`'s boss-flag map) |
 
 No per-instance "Partner Skill" field was observed -- consistent with the

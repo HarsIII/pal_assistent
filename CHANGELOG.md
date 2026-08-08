@@ -24,6 +24,15 @@
 - `IsRarePal` (Alpha hypothesis) deliberately left as UNKNOWN/open per user
   direction, pending correlation against Pals independently known to be (or
   not be) Alpha.
+- Built `save/inspector/pal_identity.py`'s InstanceId-based identification
+  hierarchy and used it for a clean, unambiguous controlled test
+  (TEST_CONDENSE_002): one condensation (2 stars -> 3 stars) produced
+  `Rank: 3 -> 4` and `Hp.Value: 5244000 -> 5483000`, with Talents, passives,
+  level, and skills all unchanged, and no fields added or removed.
+  `Rank_HP/Attack/Defence/CraftSpeed` remained absent for a second
+  consecutive test.
+- VERIFIED (user cross-checked against in-game UI): `Hp.Value = displayed_HP
+  * 1000`.
 
 ## Phase 0 -- Save Researcher (2026-08-07)
 

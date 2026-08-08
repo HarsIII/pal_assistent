@@ -169,4 +169,44 @@ PHASE_0_FACTS: list[Fact] = [
         source="scripts/find_rank_changes.py, before_condense/after_condense snapshots, 2026-08-08",
         date_recorded="2026-08-08",
     ),
+    Fact(
+        statement=(
+            "Hp.Value (the Int64Property under the FixedPoint64 'Hp' struct) is "
+            "displayed_HP * 1000. Confirmed by the user directly cross-referencing "
+            "this save's stored values against the in-game UI on a controlled test "
+            "Pal (TEST_CONDENSE_002 / InstanceId=ad09af1a-4c9c-c977-fea2-6d8ab37bb295): "
+            "5244000 <-> displayed 5244 (before condensing), 5483000 <-> displayed "
+            "5483 (after). NOT independently verified for ShieldHP.Value, which "
+            "uses the same FixedPoint64 struct type -- the same x1000 scaling is a "
+            "reasonable but UNVERIFIED extension for that field."
+        ),
+        confidence=Confidence.VERIFIED,
+        source_type=SourceType.USER_DEFINED,
+        source="User cross-checked save values against in-game UI display, 2026-08-08",
+        date_recorded="2026-08-08",
+    ),
+    Fact(
+        statement=(
+            "Controlled test #2 (TEST_CONDENSE_002, CharacterID=BOSS_MonochromeQueen, "
+            "InstanceId=ad09af1a-4c9c-c977-fea2-6d8ab37bb295, unambiguously tracked "
+            "via InstanceId, unlike test #1): one condensation from visual 2 stars to "
+            "3 stars produced Rank 3 -> 4 and Hp.Value 5244000 -> 5483000. "
+            "Talent_HP/Talent_Shot/Talent_Defense, PassiveSkillList, EquipWaza/"
+            "MasteredWaza, Level, and Exp were all unchanged. Rank_HP/Rank_Attack/"
+            "Rank_Defence/Rank_CraftSpeed remained entirely absent (2nd consecutive "
+            "condensation test with no per-stat Rank_* field appearing -- still not "
+            "conclusive proof they're unrelated to condensing, but two consistent "
+            "null results is meaningful accumulating evidence). No fields were "
+            "added or removed by condensing; only existing field values changed. "
+            "This is now 2 consistent data points for the hypothesis "
+            "save_rank = visual_stars + 1 (test #1: uncondensed -> Rank 5 at 4 "
+            "stars; test #2: Rank 3 -> 4 for 2 stars -> 3 stars). Per explicit user "
+            "instruction, this mapping stays INFERRED, not promoted to VERIFIED, "
+            "until further confirmed."
+        ),
+        confidence=Confidence.INFERRED,
+        source_type=SourceType.SAVE_OBSERVED,
+        source="scripts/diff_specific_pal.py --instance-id, before_condense2/after_condense2 snapshots, 2026-08-08",
+        date_recorded="2026-08-08",
+    ),
 ]
