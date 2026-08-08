@@ -1,0 +1,13 @@
+# Virtual environment
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Generated report fragments can contain snippets of the player's real save
+# data (nicknames, base names, etc.) via example values -- never commit them.
+reports/_generated/
+
+# Never commit real save files or copies of them, under any name.
+*.sav
+*.sav.json

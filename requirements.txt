@@ -1,0 +1,15 @@
+# Runtime dependencies for the Save Parser / Save Researcher (Phase 0).
+# Kept minimal per the project's data-driven, modular philosophy.
+
+# GVAS property-tree parsing is provided by a vendored snapshot of
+# palworld_save_tools (see save/adapters/vendor/palworld_save_tools/VENDOR_INFO.md).
+# These are ITS runtime dependencies, which we must also install:
+loguru>=0.7.3
+orjson>=3.11.8
+
+# Oodle ("PlM") decompression bindings (open-source "ooz" reimplementation).
+# Verified independently against real save files -- see SAVE_FORMAT.md.
+pyooz>=0.0.8
+
+# Testing
+pytest>=8.0.0
