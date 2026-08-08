@@ -13,8 +13,8 @@ NORMALIZATION       <- save/normalization/pal_mapper.py       (EXISTS, Pal/playe
     |
 DOMAIN MODEL        <- domain/pal/ (PalInstance, PalGenotype exist;
     |                  PalSpecies is a schema only, no data source yet)
-GAME RULES          <- data/rules/ has only the Phase 0/investigation
-    |                  fact registry so far, not gameplay/breeding rules
+GAME RULES          <- data/rules/ has the fact registry; data/breeding/
+    |                  now has vendored species + breeding-combination data
 SIMULATION          <- not started (engine/)
     |
 OPTIMIZATION        <- not started (optimizer/)
@@ -59,18 +59,20 @@ Two things can change independently of the rest of this project:
 | `domain/pal/pal_genotype.py` | Narrow "parent-facing view" of a `PalInstance` for the future breeding engine. Does NOT claim these fields are what Palworld actually inherits -- that's unverified, pending breeding-engine-phase differential testing. |
 | `domain/pal/pal_species.py` | Static per-species data (base stats, partner skill, breeding rank, etc.) -- **schema only, no data populated**. This cannot come from a save file; it needs an external, citable source, not yet chosen. |
 | `data/rules/ruleset.py` | Versioned fact registry: statement, confidence (VERIFIED/INFERRED/UNKNOWN/USER_DEFINED), source, date. |
+| `data/breeding/vendor/palcalc/` | Vendored species + breeding-combination data (MIT). See its `VENDOR_INFO.md`. |
+| `data/breeding/breeding_database.py` | The only intended access point for the vendored breeding data -- species lookup, breeding-pair lookup (order-independent, gender-aware), and clearly-separated "raw, unverified" accessors for inheritance weights and the vendor's own pathfinding table. |
 | `config/settings.py` | Paths (project root, default save location, safe workdir under the OS temp directory -- never inside the repo). |
 
 ## Not yet built (by design -- see README's phase plan)
 
 `engine/`, `optimizer/`, `assistant/`, `database/`, `gui/` do not exist yet.
-`domain/` exists but only for Pal/player instance data derived from a save --
-`PalSpecies` (species-level static data: base stats, breeding rank, partner
-skill) is a schema with zero populated data, because that data cannot come
-from a save file and no external source has been chosen yet. This is the
-next major decision point (see CHANGELOG.md), analogous to the save-parser
-library decision in Phase 0: it needs the same research-before-committing
-treatment, not an invented/guessed dataset.
+`domain.pal.PalSpecies` now gets real data via `BreedingDatabase`, but several
+fields remain genuinely unpopulated because the vendored source doesn't have
+them either (`partner_skill_id`, `elements`, `active_skill_pool`) -- these are
+documented gaps, not bugs, and need a different/additional data source later
+if they turn out to matter. Breeding pathfinding (the actual solver, as
+opposed to the vendored `MinBreedingSteps` cross-check table) is the next
+piece of engine/ work.
 
 ## Save safety
 

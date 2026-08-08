@@ -263,4 +263,77 @@ PHASE_0_FACTS: list[Fact] = [
         source="Synthesis of the Rank_* investigation, 2026-08-08",
         date_recorded="2026-08-08",
     ),
+    Fact(
+        statement=(
+            "Species-level static data (base stats, breeding power, work "
+            "suitability) is vendored from tylercamp/palcalc "
+            "(commit c59712e24b839a0bedef16b06a1a0117e8741fe3, MIT license) -- "
+            "see data/breeding/vendor/palcalc/VENDOR_INFO.md. Its InternalName "
+            "field was directly cross-checked against real CharacterID values "
+            "from this project's own save and resolved correctly in every case "
+            "tested: IceHorse->Frostallion, MonochromeQueen->Solenne, "
+            "Umihebi->Jormuntide, Umihebi_Fire->Jormuntide Ignis, "
+            "JetDragon->Jetragon, ClownRabbit->Dupin, BlackPuppy->Smokie, "
+            "DomeArmorDragon->Aegidron, WeaselDragon->Chillet. One save "
+            "CharacterID (KingWhale_otomo) did NOT resolve directly -- the "
+            "'_otomo' suffix is presumably a save-side variant/tamed-form "
+            "marker not present in this dataset; BreedingDatabase.get_species "
+            "returns None for it rather than guessing via suffix-stripping. "
+            "Known gaps in this data source (not an error, just absent): "
+            "PartnerSkill is null for all 299 species; no per-species elemental "
+            "typing is present at all (only a standalone, unlinked element-name "
+            "list)."
+        ),
+        confidence=Confidence.VERIFIED,
+        source_type=SourceType.DATAMINED,
+        source="data/breeding/vendor/palcalc/VENDOR_INFO.md, cross-checked against real save CharacterIDs, 2026-08-08",
+        date_recorded="2026-08-08",
+    ),
+    Fact(
+        statement=(
+            "The vendored breeding.json table stores each unordered "
+            "species pair exactly once (no duplicate reversed-order entries) "
+            "-- checked directly, not assumed: 0 of ~4971 sampled pairs had a "
+            "reverse-order duplicate. Pair ordering itself is NOT alphabetical "
+            "nor by internal species index (both orderings were violated in "
+            "roughly half the sampled entries) -- lookups must not depend on "
+            "which order the source data happens to list a pair in. "
+            "Critically, exactly one pair in the entire 44,851-entry table "
+            "(CatMage x FoxMage) produces a DIFFERENT child depending on "
+            "which parent is male vs female (FEMALE CatMage + MALE FoxMage "
+            "-> CatMage_Fire; MALE CatMage + FEMALE FoxMage -> FoxMage_Dark). "
+            "BreedingDatabase.find_breeding_results is keyed by unordered "
+            "species pair but returns ALL recorded combinations for that "
+            "pair (usually one, sometimes more) rather than collapsing to a "
+            "single result, specifically to avoid silently dropping this "
+            "kind of gender-dependent outcome."
+        ),
+        confidence=Confidence.VERIFIED,
+        source_type=SourceType.DATAMINED,
+        source="Direct inspection of the vendored breeding.json, 2026-08-08",
+        date_recorded="2026-08-08",
+    ),
+    Fact(
+        statement=(
+            "db.json's BreedingMechanics (IVInheritanceWeights, "
+            "PassiveInheritanceWeights, PassiveRandomWeights) and "
+            "BreedingGenderProbability are DATAMINED but NOT independently "
+            "verified by this project -- exposed via separate accessors "
+            "(get_breeding_mechanics_raw, get_breeding_gender_probability_raw) "
+            "specifically so they can't be mistaken for the same confidence "
+            "level as the species/breeding-pair data, which WAS "
+            "cross-checked. Verify these numbers via this project's own "
+            "differential-analysis method (the same approach used for "
+            "Rank_HP/Attack/Defence/CraftSpeed) before relying on them in the "
+            "breeding engine. Similarly, breeding.json's MinBreedingSteps "
+            "table is vendored source data ONLY, not this project's "
+            "authoritative pathfinding result -- the breeding-pathfinding "
+            "solver will be independently implemented and tested, and may "
+            "use MinBreedingSteps only as a cross-check."
+        ),
+        confidence=Confidence.INFERRED,
+        source_type=SourceType.DATAMINED,
+        source="data/breeding/vendor/palcalc/VENDOR_INFO.md",
+        date_recorded="2026-08-08",
+    ),
 ]

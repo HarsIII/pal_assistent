@@ -1,5 +1,36 @@
 # Changelog
 
+## Breeding database vendored: palcalc (2026-08-08)
+
+- Researched species/breeding data sources (4 parallel investigations:
+  paldb.cc, GitHub datamined repos, wiki-documented breeding formula, other
+  tools' data sources). Chose `tylercamp/palcalc` (MIT, commit
+  `c59712e24b839a0bedef16b06a1a0117e8741fe3`, pushed 2026-08-02).
+- Verified directly before committing: downloaded both `db.json` and
+  `breeding.json` from the pinned commit, confirmed byte-identical to the
+  `master`-branch copy, computed SHA256 checksums, and cross-checked 9 real
+  `CharacterID` values from this project's own save against the vendored
+  `InternalName` field -- all resolved correctly (e.g. `IceHorse` ->
+  Frostallion, `ClownRabbit` -> Dupin, explaining the "Dupina" nickname).
+- Found and handled two real data-quality subtleties before writing any
+  lookup code: (1) `breeding.json` never stores a pair in both orders, and
+  neither alphabetical nor internal-index ordering is consistent, so lookups
+  must normalize by unordered pair; (2) exactly one pair in 44,851 entries
+  (CatMage x FoxMage) produces a *different* child depending on which parent
+  is male vs female -- `BreedingDatabase.find_breeding_results` returns all
+  matching combinations rather than collapsing to one, specifically to
+  avoid silently dropping this case.
+- Built `data/breeding/breeding_database.py` (species lookup +
+  breeding-pair lookup) with clearly separated "raw, unverified" accessors
+  for `BreedingMechanics` (inheritance weights) and `MinBreedingSteps`
+  (explicitly NOT our authoritative pathfinding result -- our own solver
+  will be independently built and tested).
+- `domain.pal.PalSpecies` now gets real data. Documented gaps in the source
+  itself (not this project): `PartnerSkill` is null for all 299 species;
+  no per-species elemental typing exists in this dataset at all.
+- 20 new tests (67 total), including regression tests built from the two
+  real edge cases found above.
+
 ## Domain model started: PalInstance (2026-08-08)
 
 - Built `domain/pal/pal_instance.py` (`PalInstance`), `domain/pal/pal_genotype.py`

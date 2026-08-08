@@ -28,9 +28,14 @@ model, breeding engine, optimizer, or GUI. That is intentional (see
   individual Pals/players (InstanceId, verified stable, over nickname/species).
 - `save/normalization/pal_mapper.py` -- maps raw save entries to the domain
   model.
-- `domain/pal/` -- `PalInstance` (populated from real saves) and
-  `PalGenotype` (a narrow view for the future breeding engine) exist.
-  `PalSpecies` is a schema only -- no data source has been chosen yet.
+- `domain/pal/` -- `PalInstance` (populated from real saves), `PalGenotype`
+  (a narrow view for the future breeding engine), and `PalSpecies` (now
+  populated via `data/breeding/breeding_database.py`, vendored from
+  tylercamp/palcalc and cross-checked against real save data -- some fields
+  like partner skill and elements remain unpopulated, a gap in that source,
+  not this project).
+- `data/breeding/breeding_database.py` -- species lookup and
+  order-independent, gender-aware breeding-combination lookup.
 - `data/rules/ruleset.py` -- a small, versioned fact registry (see
   "Principles" below).
 
