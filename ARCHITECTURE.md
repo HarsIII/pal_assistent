@@ -1,20 +1,20 @@
 # Architecture
 
-## Pipeline (target shape; only the first two boxes exist today)
+## Pipeline (target shape; first four boxes exist today)
 
 ```
 SAVE FILE
     |
-SAVE PARSER        <- save/adapters/, save/parser/     (EXISTS)
+SAVE PARSER        <- save/adapters/, save/parser/           (EXISTS)
     |
 RAW SAVE MODEL      (a plain dict: header/properties/trailer -- what
     |                save/adapters/gvas_adapter.py returns)
-NORMALIZATION       <- not started
+NORMALIZATION       <- save/normalization/pal_mapper.py       (EXISTS, Pal/player only so far)
     |
-DOMAIN MODEL        <- not started (domain/)
-    |
-GAME RULES          <- not started (data/rules/ has only the Phase 0
-    |                  fact registry so far, not gameplay rules)
+DOMAIN MODEL        <- domain/pal/ (PalInstance, PalGenotype exist;
+    |                  PalSpecies is a schema only, no data source yet)
+GAME RULES          <- data/rules/ has only the Phase 0/investigation
+    |                  fact registry so far, not gameplay/breeding rules
 SIMULATION          <- not started (engine/)
     |
 OPTIMIZATION        <- not started (optimizer/)
@@ -53,15 +53,24 @@ Two things can change independently of the rest of this project:
 | `save/inspector/save_researcher.py` | Orchestrates: locate -> copy -> decompress -> parse -> walk -> report, per file in a save bundle. |
 | `save/inspector/report_writer.py` | Renders SchemaWalker/SaveResearchReport data as markdown tables. |
 | `save/differential/differ.py` | Path-level diff between two parsed saves (dev/research tool for reverse-engineering unknown fields). |
+| `save/inspector/pal_identity.py` | Identification hierarchy for CharacterSaveParameterMap entries: InstanceId (verified stable) > nickname (optional, not unique) > CharacterID (species, not identity). See its docstring for the full evidence. |
+| `save/normalization/pal_mapper.py` | Maps one raw CharacterSaveParameterMap entry (via a `PalEntryRef`) to a `domain.pal.pal_instance.PalInstance`. The only place that translates between raw property shapes and the domain model. |
+| `domain/pal/pal_instance.py` | A single Pal/player as it exists in a save. Every field's confidence (VERIFIED/INFERRED/UNKNOWN) is documented in its module docstring. |
+| `domain/pal/pal_genotype.py` | Narrow "parent-facing view" of a `PalInstance` for the future breeding engine. Does NOT claim these fields are what Palworld actually inherits -- that's unverified, pending breeding-engine-phase differential testing. |
+| `domain/pal/pal_species.py` | Static per-species data (base stats, partner skill, breeding rank, etc.) -- **schema only, no data populated**. This cannot come from a save file; it needs an external, citable source, not yet chosen. |
 | `data/rules/ruleset.py` | Versioned fact registry: statement, confidence (VERIFIED/INFERRED/UNKNOWN/USER_DEFINED), source, date. |
 | `config/settings.py` | Paths (project root, default save location, safe workdir under the OS temp directory -- never inside the repo). |
 
 ## Not yet built (by design -- see README's phase plan)
 
-`domain/`, `engine/`, `optimizer/`, `assistant/`, `database/`, `gui/` do not
-exist yet. Building them before the save format is understood and verified
-would mean designing a domain model against guessed data shapes -- exactly
-what this project's own principles rule out.
+`engine/`, `optimizer/`, `assistant/`, `database/`, `gui/` do not exist yet.
+`domain/` exists but only for Pal/player instance data derived from a save --
+`PalSpecies` (species-level static data: base stats, breeding rank, partner
+skill) is a schema with zero populated data, because that data cannot come
+from a save file and no external source has been chosen yet. This is the
+next major decision point (see CHANGELOG.md), analogous to the save-parser
+library decision in Phase 0: it needs the same research-before-committing
+treatment, not an invented/guessed dataset.
 
 ## Save safety
 

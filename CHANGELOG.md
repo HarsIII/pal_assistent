@@ -1,5 +1,24 @@
 # Changelog
 
+## Domain model started: PalInstance (2026-08-08)
+
+- Built `domain/pal/pal_instance.py` (`PalInstance`), `domain/pal/pal_genotype.py`
+  (`PalGenotype` + `from_pal_instance`), and `domain/pal/pal_species.py`
+  (schema only, no data yet -- species-level static data needs an external
+  source, not a save file).
+- Built `save/normalization/pal_mapper.py`, the first NORMALIZATION-layer
+  code: maps a raw `CharacterSaveParameterMap` entry to a `PalInstance`,
+  applying the verified HP scaling and keeping condensation/Soul fields
+  properly independent per the Rank_* investigation.
+- 14 new tests (8 synthetic mapper tests, 6 integration tests against the
+  real save mapping every current Pal/player entry and checking structural
+  invariants). 47 total tests passing.
+- Every field's confidence (VERIFIED/INFERRED/UNKNOWN) is documented directly
+  in `PalInstance`'s docstring, cross-referenced to `data/rules/ruleset.py`.
+- Next decision point: sourcing real `PalSpecies` data (base stats, breeding
+  rank, partner skills) -- cannot come from a save file, needs the same
+  research-before-committing treatment as the save-parser library decision.
+
 ## Rank_* field investigation resolved (2026-08-08)
 
 - Investigated `Rank_HP`/`Rank_Attack`/`Rank_Defence`/`Rank_CraftSpeed` across

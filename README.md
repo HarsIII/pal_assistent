@@ -24,6 +24,13 @@ model, breeding engine, optimizer, or GUI. That is intentional (see
 - `save/differential/differ.py` -- diffs two parsed saves (e.g. the same
   world at two points in time) by path, for reverse-engineering unknown
   fields.
+- `save/inspector/pal_identity.py` -- the identification hierarchy for
+  individual Pals/players (InstanceId, verified stable, over nickname/species).
+- `save/normalization/pal_mapper.py` -- maps raw save entries to the domain
+  model.
+- `domain/pal/` -- `PalInstance` (populated from real saves) and
+  `PalGenotype` (a narrow view for the future breeding engine) exist.
+  `PalSpecies` is a schema only -- no data source has been chosen yet.
 - `data/rules/ruleset.py` -- a small, versioned fact registry (see
   "Principles" below).
 
