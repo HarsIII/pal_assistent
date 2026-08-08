@@ -170,6 +170,37 @@ No per-instance "Partner Skill" field was observed -- consistent with the
 project's own domain-model split (`PalSpecies.partner_skill` is
 species-level static data, not saved per-instance).
 
+## Pal/player instance identification (VERIFIED)
+
+`CharacterSaveParameterMap`'s key is a raw `{PlayerUId, InstanceId, DebugName}`
+struct. **`InstanceId` is the correct, verified-stable identifier for "this
+exact individual Pal or player"** -- not `NickName` (usually absent, never
+guaranteed unique) and not `CharacterID` (identifies the *species*; this save
+alone has ~90 separate instances sharing the `Umihebi`/`Umihebi_Fire`
+CharacterID family).
+
+This was verified empirically, not assumed (`scripts/verify_instance_id_stability.py`),
+against two real snapshots of this save taken 5 minutes apart around a real
+condensation action:
+
+- **Uniqueness within a save**: 0 collisions across 1303 entries (before) and
+  1234 entries (after).
+- **Stability across a save-to-save transition**: of 1217 entries present in
+  both snapshots (matched by `InstanceId`), 0 had a mismatched `CharacterID`
+  or `IsPlayer` value -- statistically conclusive at this sample size that
+  `InstanceId` is not being reused/regenerated between saves.
+- Confirmed to track a genuinely *mutating* entity, not a static one (e.g. one
+  Pal's `Level` changed from 39 to 40 across the two snapshots while its
+  `InstanceId` stayed fixed).
+- Entry-count bookkeeping is internally consistent: 86 entries present only
+  in "before" (consumed as condensation fodder) and 17 present only in
+  "after" (net matches the observed 1303 -> 1234 total).
+
+The full identification hierarchy this establishes -- and the reasoning for
+never using nickname/species/level as a primary key -- is documented in
+`save/inspector/pal_identity.py`, which all differential-analysis scripts now
+use instead of duplicating this extraction logic ad hoc.
+
 ## Base camp (`worldSaveData.BaseCampSaveData`) structure
 
 Parses completely via the vendored fork. Notable sub-structures: `WorkCollection`,

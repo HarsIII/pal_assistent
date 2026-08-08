@@ -1,5 +1,30 @@
 # Changelog
 
+## Post-Phase-0 hypothesis verification (2026-08-08)
+
+- git installed and repo initialized; Phase 0 committed.
+- Verified (not assumed) that `InstanceId` is a stable, unique per-Pal/player
+  identifier, both within a single save and across a save-to-save
+  transition, using two real before/after snapshots around a live
+  condensation action. See `save/inspector/pal_identity.py` for the
+  resulting identification hierarchy and `SAVE_FORMAT.md` for the evidence.
+- Found and fixed a bug in an early ad-hoc diffing script that mis-extracted
+  the map key (assumed a `{"value": ...}` wrapper that isn't there for this
+  particular key shape), which had collapsed 1303/1234 entries into a single
+  bucket. Refactored all differential scripts to share `pal_identity.py`
+  instead of duplicating extraction logic, specifically to avoid this class
+  of bug recurring.
+- Confirmed condensing a Pal sets its `Rank` field and increases `Hp.Value`
+  (via real before/after diff). Did NOT yet confirm which Pal instance the
+  user intended to test -- CharacterID-substring matching was ambiguous
+  (~90 Umihebi-family instances in this save) and matched the wrong one on
+  the first attempt. A follow-up test with a unique marker nickname is in
+  progress. `Rank_HP`/`Rank_Attack`/`Rank_Defence`/`Rank_CraftSpeed` remain
+  unconfirmed either way.
+- `IsRarePal` (Alpha hypothesis) deliberately left as UNKNOWN/open per user
+  direction, pending correlation against Pals independently known to be (or
+  not be) Alpha.
+
 ## Phase 0 -- Save Researcher (2026-08-07)
 
 - Investigated this machine's real Palworld save; discovered it uses Oodle

@@ -119,4 +119,54 @@ PHASE_0_FACTS: list[Fact] = [
         source="palworld_save_tools PALWORLD_CUSTOM_PROPERTIES / PALWORLD_TYPE_HINTS field naming",
         date_recorded="2026-08-07",
     ),
+    Fact(
+        statement=(
+            "worldSaveData.CharacterSaveParameterMap's key is a raw "
+            "{PlayerUId, InstanceId, DebugName} struct (not itself wrapped in "
+            "a further property-node level). InstanceId is a valid, stable "
+            "per-entity identifier: (1) unique within a single save -- "
+            "verified zero collisions across 1303 and 1234 entries in two "
+            "real snapshots; (2) stable across a save-to-save transition for "
+            "any entry that persists -- verified zero CharacterID/IsPlayer "
+            "mismatches across 1217 entries common to both snapshots, and "
+            "confirmed to track a genuinely mutating entity (e.g. a Pal's "
+            "own Level field changing while its InstanceId stayed fixed). "
+            "NickName is NOT a safe identifier: usually absent, and never "
+            "guaranteed unique when present. CharacterID identifies the "
+            "species, not an individual -- this save alone has ~90 separate "
+            "instances sharing the CharacterID family 'Umihebi'/'Umihebi_Fire'. "
+            "See save/inspector/pal_identity.py for the full identification "
+            "hierarchy this informs."
+        ),
+        confidence=Confidence.VERIFIED,
+        source_type=SourceType.SAVE_OBSERVED,
+        source=(
+            "scripts/verify_instance_id_stability.py run against two real "
+            "Level.sav snapshots of this save (before/after a Pal "
+            "condensation), 2026-08-08"
+        ),
+        date_recorded="2026-08-08",
+    ),
+    Fact(
+        statement=(
+            "Condensing a Pal (combining duplicates to raise its rank) sets "
+            "its Rank field (was absent/None before any condensing) and "
+            "increases Hp.Value. Confirmed via before/after diff of a real "
+            "condensation action, matched by InstanceId. NOT yet confirmed: "
+            "which specific Pal instance the user intended to test -- an "
+            "initial attempt to identify it by CharacterID substring ('contains "
+            "Jormuntide') was ambiguous (this save has ~90 Umihebi-family "
+            "instances) and matched the wrong one. A follow-up test using a "
+            "unique marker nickname is in progress to confirm this "
+            "unambiguously and to test the Rank_HP/Rank_Attack/Rank_Defence/"
+            "Rank_CraftSpeed per-stat-boost hypothesis (no change was observed "
+            "in those four fields in this first attempt, which could mean "
+            "no random proc succeeded, or that they are unrelated to "
+            "condensing -- inconclusive either way from a single data point)."
+        ),
+        confidence=Confidence.INFERRED,
+        source_type=SourceType.SAVE_OBSERVED,
+        source="scripts/find_rank_changes.py, before_condense/after_condense snapshots, 2026-08-08",
+        date_recorded="2026-08-08",
+    ),
 ]
