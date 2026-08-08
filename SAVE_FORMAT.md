@@ -154,8 +154,8 @@ not official documentation or our own independent confirmation:
 | `Talent_HP`, `Talent_Shot`, `Talent_Defense` | ByteProperty | Almost certainly the in-game "Potential" / IV-like stats (0-100 range values observed) -- name-to-stat mapping not independently confirmed |
 | `PassiveSkillList` | ArrayProperty[NameProperty] | Passive skills |
 | `EquipWaza`, `MasteredWaza` | ArrayProperty[EnumProperty] | Active skills (equipped vs. all learned) |
-| `Rank` | ByteProperty | Likely "condensation" star rank |
-| `Rank_HP`, `Rank_Attack`, `Rank_Defence`, `Rank_CraftSpeed` | ByteProperty | Likely per-stat boosts from condensing |
+| `Rank` | ByteProperty | Condensation/star rank. `Rank = visual_stars + 1` remains **INFERRED** (2 consistent controlled data points; not yet promoted to VERIFIED per explicit decision to require more evidence). |
+| `Rank_HP`, `Rank_Attack`, `Rank_Defence`, `Rank_CraftSpeed` | ByteProperty | **Pal Soul investment per stat (HP/Attack/Defense/Work Speed), independent of `Rank`/condensation.** See "Rank_* field investigation" below for the full evidence trail -- this was initially (and incorrectly) hypothesized to be a condensation byproduct. |
 | `IsRarePal` | BoolProperty | Candidate for "Alpha" -- **not confirmed**; could also mean shiny/rare color variant. UNKNOWN which. |
 | `SlotId.ContainerId.ID` + `SlotId.SlotIndex` | StructProperty / IntProperty | Which container (party/base/Palbox) and slot the Pal occupies |
 | `OwnerPlayerUId`, `OldOwnerPlayerUIds` | StructProperty (Guid) | Current and past owners |
@@ -208,6 +208,45 @@ Parses completely via the vendored fork. Notable sub-structures: `WorkCollection
 `ModuleMap` (per-module data, including `passive_effects` with a `type` and
 `work_hard_type` -- likely base facility passive-effect data, **UNKNOWN**
 exact meaning of the effect `type` enum values, not yet cross-referenced).
+
+## Rank_* field investigation (Pal Souls, not condensation)
+
+Initial hypothesis (two controlled condensation tests, both producing zero
+change in these four fields) was that `Rank_HP`/`Rank_Attack`/`Rank_Defence`/
+`Rank_CraftSpeed` might be a rare random condensation proc. Investigation
+(`scripts/investigate_rank_stat_fields.py`, `scripts/list_max_rank_pals.py`)
+found:
+
+- **No separate Soul-tracking field exists anywhere in the save** -- an
+  exhaustive path/value search for "soul", "spirit", "essence" and related
+  terms found nothing. These four fields are the only candidate location for
+  Soul investment data, meaning they most likely encode it directly (souls
+  are consumed on use; their cumulative effect is written straight into the
+  stat field, 0-20, matching Palworld's known 20-souls-per-stat cap).
+- Of 22 Rank-5 Pals in this save, only 6 have any of these fields -- and
+  within the 9 `BOSS_`-prefixed (Legendary/superboss-tier) Rank-5 Pals,
+  5 have them and 4 don't (e.g. `BOSS_BlackPuppy`, Rank 5, high Talents, a
+  `Rare` passive, zero `Rank_*` fields). Species/boss-tier and Rank-5-alone
+  are both ruled out as sufficient explanations.
+- **VERIFIED via user confirmation**: `ClownRabbit` ("Dupina"), an ordinary
+  wild-caught Pal with all four fields at 20, was directly confirmed by the
+  user to correspond to Pal Souls they personally invested -- independent of
+  Dupina's (also player-driven) condensation to Rank 5.
+- Two Pals have `Rank_Attack` present while `Rank` is entirely absent
+  (never condensed) -- only explainable by an independent progression system.
+
+**Current model**: `Rank_HP`/`Rank_Attack`/`Rank_Defence`/`Rank_CraftSpeed` =
+Pal Soul investment per stat; `Rank` = condensation. Modeled as two
+independent systems unless evidence shows a real dependency.
+
+**Explicitly unresolved, and deliberately not inferred from the data**:
+whether `BOSS_IceHorse` (the user's Frostallion, condensed to Rank 5 via the
+Medal Merchant/Dog Coin vendor rather than duplicate Pals, `Rank_HP =
+Rank_Attack = Rank_Defence = 20`) was *also* separately given Pal Souls.
+Concluding "yes" from the field values alone would be circular -- the
+values being at 20 is exactly the thing that would need independent
+confirmation, not evidence for itself. This needs the user's own memory/
+records, not save-data inference.
 
 ## Locale note
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## Rank_* field investigation resolved (2026-08-08)
+
+- Investigated `Rank_HP`/`Rank_Attack`/`Rank_Defence`/`Rank_CraftSpeed` across
+  the whole save (not just the two controlled condensation tests, which both
+  showed zero change in these fields). Found no separate Soul-tracking field
+  anywhere; scanned all 22 Rank-5 Pals and found species/boss-tier and
+  Rank-5-alone both insufficient to explain presence.
+- User confirmed `ClownRabbit`/"Dupina"'s fields correspond to Pal Soul
+  investment, independent of its (also player-driven) condensation.
+- Model updated: `Rank` = condensation/star progression; `Rank_HP/Attack/
+  Defence/CraftSpeed` = Pal Soul investment per stat. Modeled as independent
+  systems. Whether the user's Frostallion (`BOSS_IceHorse`, Medal Merchant
+  condensed) was *also* Soul-invested remains explicitly unresolved --
+  deliberately not inferred from its field values (would be circular).
+
 ## Post-Phase-0 hypothesis verification (2026-08-08)
 
 - git installed and repo initialized; Phase 0 committed.

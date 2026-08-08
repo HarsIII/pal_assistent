@@ -209,4 +209,58 @@ PHASE_0_FACTS: list[Fact] = [
         source="scripts/diff_specific_pal.py --instance-id, before_condense2/after_condense2 snapshots, 2026-08-08",
         date_recorded="2026-08-08",
     ),
+    Fact(
+        statement=(
+            "Rank_HP, Rank_Attack, Rank_Defence, and Rank_CraftSpeed represent "
+            "Pal Soul investment (a progression system independent of Rank -- "
+            "condensation/star level), NOT a condensation byproduct. Field-by-field: "
+            "Rank_HP = HP souls invested, Rank_Attack = Attack souls, Rank_Defence = "
+            "Defense souls, Rank_CraftSpeed = Work Speed souls. Values observed "
+            "0-20 -- consistent with Palworld's known 20-souls-per-stat cap. "
+            "Evidence: (1) a full search of every property path and leaf string "
+            "value in Level.sav found no separate 'souls invested' counter "
+            "anywhere -- these fields are the only candidate location; (2) "
+            "ClownRabbit ('Dupina', InstanceId=8e4b29b7-4028-4256-e563-30bd53d4c8db), "
+            "an ordinary wild-caught Pal with no special/boss status, has all four "
+            "fields at 20, and the user confirmed this corresponds exactly to Pal "
+            "Soul investment they personally made -- NOT to condensation (Dupina's "
+            "condensation to Rank 5 is a separate, independently-made investment); "
+            "(3) among 22 Rank-5 Pals in this save, only 6 have any Rank_* field, "
+            "including a stark within-species-tier split (5 of 9 BOSS_-prefixed "
+            "Rank-5 Pals have it, 4 don't -- e.g. BOSS_BlackPuppy is Rank 5 with a "
+            "'Rare' passive and zero Rank_* fields), ruling out species/boss-tier "
+            "and Rank-5-alone as sufficient explanations; (4) two Pals have "
+            "Rank_Attack present while Rank is None (never condensed), which is "
+            "only consistent with an independent progression system. "
+            "UNRESOLVED: whether BOSS_IceHorse (the user's Frostallion, Medal "
+            "Merchant/Dog Coin condensed to Rank 5, Rank_HP=Rank_Attack=Rank_Defence=20) "
+            "was ALSO separately given Pal Souls. The user has explicitly declined "
+            "to infer this from the field values themselves (doing so would be "
+            "circular -- the fields being at 20 cannot both be the evidence for "
+            "and the fact being tested). This must be confirmed independently "
+            "(the user's own memory/records), not derived from the save."
+        ),
+        confidence=Confidence.INFERRED,
+        source_type=SourceType.SAVE_OBSERVED,
+        source=(
+            "scripts/investigate_rank_stat_fields.py, scripts/list_max_rank_pals.py, "
+            "search for a separate soul-tracking field (none found), user confirmation "
+            "of Dupina's Soul-investment history, 2026-08-08"
+        ),
+        date_recorded="2026-08-08",
+    ),
+    Fact(
+        statement=(
+            "Rank (condensation/star progression) and Rank_HP/Attack/Defence/"
+            "CraftSpeed (Pal Soul investment) are modeled as INDEPENDENT "
+            "progression systems in the domain model -- a Pal can have either, "
+            "both, or neither, and one cannot be inferred from the other. This "
+            "is a modeling decision, to be revised if future evidence shows a "
+            "real dependency between the two systems."
+        ),
+        confidence=Confidence.INFERRED,
+        source_type=SourceType.SAVE_OBSERVED,
+        source="Synthesis of the Rank_* investigation, 2026-08-08",
+        date_recorded="2026-08-08",
+    ),
 ]
